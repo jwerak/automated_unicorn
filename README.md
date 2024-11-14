@@ -1,5 +1,20 @@
 # Automated Unicorn
 
+## Quickstart
+
+As a *root* user:
+
+```bash
+# Prerequisites
+apt-get install podman
+
+# Run the privileged container
+podman run --replace --name automated-unicorn --privileged --device /dev/snd -p 5000:5000 -d -v /home/<YOUR_USER>/MP3:/app/MP3 quay.io/jwerak/automated-unicorn
+
+# Test
+curl localhost:5000/unicorn/audio -X POST -H "Content-Type: application/json" -d "{}"
+```
+
 ## Setup
 
 ### Install
@@ -107,4 +122,17 @@ If no audio has been played:
 {
   "status": "no audio has been played yet"
 }
+```
+
+## Notes
+
+Tested on rpi 4b 64bit
+
+```txt
+PRETTY_NAME="Debian GNU/Linux 11 (bullseye)"
+NAME="Debian GNU/Linux"
+VERSION_ID="11"
+VERSION="11 (bullseye)"
+VERSION_CODENAME=bullseye
+ID=debian
 ```

@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import os
 import RPi.GPIO as GPIO
 import subprocess
 import threading
@@ -7,10 +8,10 @@ import threading
 app = Flask(__name__)
 
 # Preset variables
-PATH_AUDIO = "/home/UNI-pi/kiosk/MP3"
+PATH_AUDIO = os.getenv("PATH_AUDIO", "/home/UNI-pi/kiosk/MP3/")
 
 # Store the last played audio file for GET requests
-last_audio_file = None
+last_audio_file = ""
 
 
 # GPIO setup
@@ -38,7 +39,7 @@ initialize_gpio()
 def play_audio(file_path):
     global last_audio_file
     last_audio_file = file_path  # Save the file being played
-    subprocess.run(["mpg321", file_path])
+    subprocess.run(["mpg321", "-B", file_path])
 
 
 # Endpoint to get or set unicorn color
@@ -80,17 +81,11 @@ def unicorn_audio():
 
     elif request.method == "POST":
         data = request.json
-        audio_file = data.get("audio_file")
+        audio_file = data.get("audio_file", "")
         audio_path = f"{PATH_AUDIO}/{audio_file}"
 
         threading.Thread(target=play_audio, args=(audio_path,), daemon=True).start()
         return jsonify({"status": "playing", "audio_file": audio_file}), 200
-
-
-# Graceful GPIO cleanup
-@app.before_first_request
-def setup():
-    initialize_gpio()
 
 
 @app.teardown_appcontext
