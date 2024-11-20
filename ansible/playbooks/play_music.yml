@@ -4,6 +4,7 @@
   gather_facts: false
   vars:
     unicorn_api: http://malina4b.lan:5000
+    unicorn_audio_file: "{{ unicorn_audio | default('AnsibleAutomates') }}.mp3"
   tasks:
     - name: Call API
       ansible.builtin.uri:
@@ -14,7 +15,7 @@
         body_format: json
         headers:
           Content-Type: application/json
-        body: '{"audio_file": "AnsibleAutomates.mp3"}'
+        body: { "audio_file": "{{ unicorn_audio_file }}" }
       register: unicorn_response
 
     - name: Print result from API Call

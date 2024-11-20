@@ -25,8 +25,24 @@ Setup the Execution node:
 
 ### Automation Controller setup
 
-Create Project
+#### Create Project
 
-Name: *Automated Unicorn*
-Repository: https://github.com/jwerak/automated_unicorn.git
-Path: *ansible/playbooks*
+- Name: *Automated Unicorn*
+- Source Control Type: *Git*
+- Source Control URL: https://github.com/jwerak/automated_unicorn.git
+- Execution Environment: *Default*
+
+#### Create Job Template
+
+- Name: *Unicorn/Sing*
+- Project: *Automated Unicorn*
+- Playbook: *ansible/playbooks/play_music.yml*
+- Inventory: Demo Inventory
+- Extra Variables: e.g. `unicorn_api: http://malina4b.lan:5000`
+
+**Add and Enable Survey**:
+
+- Question: *Audio Title*
+- Answer variable name: *unicorn_api*
+- Answer Type: *Multiple Choice (Single Select)*
+- Options: ...
