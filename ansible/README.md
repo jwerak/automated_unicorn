@@ -11,6 +11,14 @@
   - Download collection receptor
     - `ansible-galaxy collection install ansible.receptor`
 
+All at once
+
+```bash
+subscription-manager repos --enable=ansible-automation-platform-2.5-for-rhel-9-x86_64-rpms
+dnf -y install receptor
+ansible-galaxy collection install ansible.receptor
+```
+
 ## Setup
 
 ### Execution node setup
@@ -37,12 +45,12 @@ Setup the Execution node:
 - Name: *Unicorn/Sing*
 - Project: *Automated Unicorn*
 - Playbook: *ansible/playbooks/play_music.yml*
-- Inventory: Demo Inventory
+- Inventory: None
 - Extra Variables: e.g. `unicorn_api: http://malina4b.lan:5000`
 
 **Add and Enable Survey**:
 
 - Question: *Audio Title*
-- Answer variable name: *unicorn_api*
+- Answer variable name: *unicorn_audio*
 - Answer Type: *Multiple Choice (Single Select)*
 - Options: ...
