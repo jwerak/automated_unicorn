@@ -32,6 +32,36 @@ export PATH_AUDIO=/home/UNI-pi/kiosk/MP3
 python3 app.py
 ```
 
+### Create SystemD unit
+
+- Create service file: `/etc/systemd/system/unicorn.service`, see below
+- reload systemd: `systemctl daemon-reload`
+- enable unit: `systemctl enable unicorn.service`
+- start unit: `systemctl start unicorn.service`
+
+```ini
+[Unit]
+Description=Automated Unicorn
+After=network.target
+
+[Service]
+Environment="PATH_AUDIO=/home/UNI-pi/kiosk/MP3"
+
+# Absolute path to the Python interpreter
+ExecStart=/usr/bin/python3 /home/UNI-pi/automated_unicorn-master/app.py
+
+# Restart policy
+Restart=always
+RestartSec=2
+
+# Standard output and error logs (optional)
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ## Container setup
 
 ### Build Container

@@ -25,12 +25,6 @@ ansible-galaxy collection install ansible.receptor
 
 Download installation bundle as [described in the documentation](https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/installing_on_openshift_container_platform/operator-add-execution-nodes_operator-platform-doc#operator-add-execution-nodes_operator-platform-doc).
 
-Setup the Execution node:
-
-```bash
-
-```
-
 ### Automation Controller setup
 
 #### Create Project
@@ -40,7 +34,7 @@ Setup the Execution node:
 - Source Control URL: https://github.com/jwerak/automated_unicorn.git
 - Execution Environment: *Default*
 
-#### Create Job Template
+#### Create Job Template Unicorn/Sing
 
 - Name: *Unicorn/Sing*
 - Project: *Automated Unicorn*
@@ -54,3 +48,21 @@ Setup the Execution node:
 - Answer variable name: *unicorn_audio*
 - Answer Type: *Multiple Choice (Single Select)*
 - Options: ...
+
+#### Create Job Template Unicorn/Color
+
+- Name: *Unicorn/Color*
+- Project: *Automated Unicorn*
+- Playbook: *ansible/playbooks/change_color.yml*
+- Inventory: None
+- Extra Variables: e.g. `unicorn_api: http://malina4b.lan:5000`
+
+**Add and Enable Survey**:
+
+- Question: *Color*
+- Answer variable name: *unicorn_color*
+- Answer Type: *Multiple Choice (Single Select)*
+- Options:
+  - red
+  - green
+  - blue
