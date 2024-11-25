@@ -35,6 +35,34 @@ def initialize_gpio():
 initialize_gpio()
 
 
+def stop_color():
+    pin_numbers = [17, 27, 22]
+
+    for pin_number in pin_numbers:
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(pin_number, GPIO.OUT)
+        GPIO.output(pin_number, GPIO.HIGH)
+
+
+# Set color
+def change_color(color):
+    stop_color()
+    pin_number = 17
+
+    if color == "red":
+        pin_number = 17
+    elif color == "green":
+        pin_number = 27
+    elif color == "blue":
+        pin_number = 22
+
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(pin_number, GPIO.OUT)
+    GPIO.output(pin_number, GPIO.LOW)
+
+
 # Function to play audio asynchronously
 def play_audio(file_path):
     global last_audio_file
@@ -51,16 +79,13 @@ def unicorn_color():
         return jsonify({"color": color}), 200
     elif request.method == "POST":
         # Changing color to red only for now
-        # data = request.json
-        # color = data.get("color")
-        color = "red"
+        data = request.json
+        color = data.get("color")
+
         # Set color logic here using GPIO pins
         print(f"Setting unicorn color to {color}")
 
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(17, GPIO.OUT)
-        GPIO.output(17, GPIO.LOW)
+        change_color(color)
 
         return jsonify({"status": "success", "color": color}), 200
 
@@ -88,10 +113,10 @@ def unicorn_audio():
         return jsonify({"status": "playing", "audio_file": audio_file}), 200
 
 
-@app.teardown_appcontext
-def cleanup_gpio(exception):
-    GPIO.cleanup()
-    print("GPIO cleaned up")
+# @app.teardown_appcontext
+# def cleanup_gpio(exception):
+#     GPIO.cleanup()
+#     print("GPIO cleaned up")
 
 
 if __name__ == "__main__":

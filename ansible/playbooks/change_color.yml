@@ -1,0 +1,23 @@
+---
+- name: Set Unicorn color
+  hosts: localhost
+  gather_facts: false
+  vars:
+    unicorn_api: http://malina4b.lan:5000
+    unicorn_color: "{{ unicorn_color | default('red') }}"
+  tasks:
+    - name: Call API
+      ansible.builtin.uri:
+        url: "{{ unicorn_api }}/unicorn/color"
+        method: POST
+        return_content: true
+        status_code: 200
+        body_format: json
+        headers:
+          Content-Type: application/json
+        body: { "color": "{{ unicorn_color }}" }
+      register: unicorn_response
+
+    - name: Print result from API Call
+      ansible.builtin.debug:
+        msg: "I've played unicorn and the response was: {{ unicorn_response }}"
