@@ -4,15 +4,21 @@
   gather_facts: false
   vars:
     unicorn_api: http://malina4b.lan:5000
-    __unicorn_color: "{{ unicorn_color_desired | default('red') }}"
+    __unicorn_color: "{{ unicorn_color_desired | default('keep') }}"
   tasks:
     - name: Set variable in Ansible automation controller inventory
+      when: __unicorn_color != "keep"
       ansible.controller.inventory:
         state: present
         name: "Demo Inventory"
         organization: "Default"
         variables:
           unicorn_color: "{{ __unicorn_color }}"
+
+    - name: Load variables from inventory
+      when: __unicorn_color != "keep"
+      ansible.builtin.set_fact:
+        unicorn_color: "{{ hostvars['localhost']['unicorn_color'] }}"
 
     - name: Unicorn Color updated
       ansible.builtin.debug:
