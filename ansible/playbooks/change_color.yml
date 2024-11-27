@@ -4,7 +4,7 @@
   gather_facts: false
   vars:
     unicorn_api: http://malina4b.lan:5000
-    __unicorn_color: "{{ unicorn_color | default('red') }}"
+    __unicorn_color: "{{ unicorn_color_desired | default('red') }}"
   tasks:
     - name: Set variable in Ansible automation controller inventory
       ansible.controller.inventory:
