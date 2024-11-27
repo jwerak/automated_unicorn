@@ -16,13 +16,9 @@
           unicorn_color: "{{ __unicorn_color }}"
 
     - name: Sync inventory
-      ansible.builtin.meta:
-        free_form: refresh_inventory
-
-    # - name: Load variables from inventory
-    #   when: __unicorn_color != "keep"
-    #   ansible.builtin.set_fact:
-    #     unicorn_color: "{{ hostvars['localhost']['unicorn_color'] }}"
+      when: __unicorn_color != "keep"
+      ansible.builtin.set_fact:
+        unicorn_color: "{{ __unicorn_color }}"
 
     - name: Unicorn Color updated
       ansible.builtin.debug:
