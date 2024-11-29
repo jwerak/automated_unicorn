@@ -67,7 +67,7 @@ WantedBy=multi-user.target
 ### Build Container
 
 ```bash
-podman build -t unicorn-app .
+podman build -t quay.io/jwerak/automated-unicorn .
 ```
 
 ### Run Container
@@ -75,9 +75,7 @@ podman build -t unicorn-app .
 As `root` user run
 
 ```bash
-podman run -d -p 5000:5000 --name unicorn-container --privileged unicorn-app
-
-podman run --replace -d -p 5000:5000 -v /home/UNI-pi/kiosk/MP3:/home/UNI-pi/kiosk/MP3 --name unicorn-container --privileged unicorn-app
+podman run --replace --name automated-unicorn -e PATH_AUDIO=/MP3 --privileged --device /dev/snd -p 5000:5000 -d -v /home/UNI-pi/kiosk/MP3:/MP3 quay.io/jwerak/automated-unicorn
 ```
 
 ## Test
