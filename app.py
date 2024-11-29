@@ -67,7 +67,12 @@ def change_color(color):
 def play_audio(file_path):
     global last_audio_file
     last_audio_file = file_path  # Save the file being played
-    subprocess.run(["mpg321", "-B", file_path])
+    subprocess.run(
+        ["mpg321", "-q", "-B", file_path],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
 
 
 # Endpoint to get or set unicorn color
