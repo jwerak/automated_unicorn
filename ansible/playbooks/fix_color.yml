@@ -1,0 +1,24 @@
+---
+- name: Fix Color
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Print color
+      ansible.builtin.debug:
+        msg: "{{ unicorn_color }}"
+
+    # - name: Call API
+    #   ansible.builtin.uri:
+    #     url: "{{ unicorn_api }}/unicorn/color"
+    #     method: POST
+    #     return_content: true
+    #     status_code: 200
+    #     body_format: json
+    #     headers:
+    #       Content-Type: application/json
+    #     body: { "color": "{{ unicorn_color }}" }
+    #   register: unicorn_response
+
+    # - name: Print result from API Call
+    #   ansible.builtin.debug:
+    #     msg: "I've played unicorn and the response was: {{ unicorn_response }}"
