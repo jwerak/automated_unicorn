@@ -7,17 +7,18 @@
       ansible.builtin.debug:
         msg: "{{ unicorn_color }}"
 
-    # - name: Call API
-    #   ansible.builtin.uri:
-    #     url: "{{ unicorn_api }}/unicorn/color"
-    #     method: POST
-    #     return_content: true
-    #     status_code: 200
-    #     body_format: json
-    #     headers:
-    #       Content-Type: application/json
-    #     body: { "color": "{{ unicorn_color }}" }
-    #   register: unicorn_response
+    - name: Call API
+      ansible.builtin.uri:
+        url: "https://caap-automates-prague.cjung.ansible-labs.de/api/controller/v2/job_templates/Unicorn%2FFixColor++Default/launch/"
+        method: POST
+        user: admin
+        password: "{{ controller_password }}"
+        return_content: true
+        status_code: 201
+        body_format: json
+        headers:
+          Content-Type: application/json
+      register: unicorn_response
 
     # - name: Print result from API Call
     #   ansible.builtin.debug:
