@@ -46,6 +46,8 @@ After=network.target
 
 [Service]
 Environment="PATH_AUDIO=/home/UNI-pi/kiosk/MP3"
+Environment="CONTROLLER_USERNAME=admin"
+Environment="CONTROLLER_PASSWORD=password"
 
 # Absolute path to the Python interpreter
 ExecStart=/usr/bin/python3 /home/UNI-pi/automated_unicorn-master/app.py

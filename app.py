@@ -3,6 +3,8 @@ import os
 import RPi.GPIO as GPIO
 import subprocess
 import threading
+import requests
+from requests.auth import HTTPBasicAuth
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -12,6 +14,15 @@ PATH_AUDIO = os.getenv("PATH_AUDIO", "/home/UNI-pi/kiosk/MP3/")
 
 # Store the last played audio file for GET requests
 last_audio_file = ""
+
+# Store the current unicorn color
+current_color = None
+
+# Credentials for external API
+CONTROLLER_USERNAME = os.getenv("CONTROLLER_USERNAME", "admin")
+CONTROLLER_PASSWORD = os.getenv("CONTROLLER_PASSWORD", "default_pass")
+
+LAUNCH_URL = "https://caap-automates-prague.cjung.ansible-labs.de/api/controller/v2/job_templates/Unicorn%2FFixColor++Default/launch/"
 
 
 # GPIO setup
@@ -78,21 +89,47 @@ def play_audio(file_path):
 # Endpoint to get or set unicorn color
 @app.route("/unicorn/color", methods=["GET", "POST"])
 def unicorn_color():
+    global current_color
     if request.method == "GET":
-        # Retrieve current color (placeholder logic)
-        color = "current_color"
+        # If current_color is None, it means it hasn't been set yet.
+        # Adjust logic if you want a default color.
+        color = current_color if current_color else "unknown"
         return jsonify({"color": color}), 200
     elif request.method == "POST":
-        # Changing color to red only for now
         data = request.json
-        color = data.get("color")
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
 
-        # Set color logic here using GPIO pins
-        print(f"Setting unicorn color to {color}")
+        new_color = data.get("color")
+        if not new_color:
+            return jsonify({"error": "No color provided"}), 400
 
-        change_color(color)
+        # Check if the new color is different from the current one
+        if new_color != current_color:
+            print(f"Setting unicorn color to {new_color}")
+            change_color(new_color)
+            current_color = new_color
 
-        return jsonify({"status": "success", "color": color}), 200
+            # Post to external endpoint if color changed
+            try:
+                response = requests.post(
+                    LAUNCH_URL,
+                    auth=HTTPBasicAuth(CONTROLLER_USERNAME, CONTROLLER_PASSWORD),
+                    # Adjust if the API requires a specific payload
+                )
+                if response.status_code not in (200, 201, 202):
+                    print(
+                        f"Failed to launch job template: {response.status_code}, {response.text}"
+                    )
+                else:
+                    print("Successfully launched job template.")
+            except Exception as e:
+                print(f"Error posting to launch endpoint: {e}")
+
+            return jsonify({"status": "success", "color": new_color}), 200
+        else:
+            # Color is the same; do nothing special
+            return jsonify({"status": "no change", "color": current_color}), 200
 
 
 # Endpoint to handle unicorn audio via POST
@@ -111,17 +148,17 @@ def unicorn_audio():
 
     elif request.method == "POST":
         data = request.json
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
         audio_file = data.get("audio_file", "")
+        if not audio_file:
+            return jsonify({"error": "No audio file provided"}), 400
+
         audio_path = f"{PATH_AUDIO}/{audio_file}"
 
         threading.Thread(target=play_audio, args=(audio_path,), daemon=True).start()
         return jsonify({"status": "playing", "audio_file": audio_file}), 200
-
-
-# @app.teardown_appcontext
-# def cleanup_gpio(exception):
-#     GPIO.cleanup()
-#     print("GPIO cleaned up")
 
 
 if __name__ == "__main__":
